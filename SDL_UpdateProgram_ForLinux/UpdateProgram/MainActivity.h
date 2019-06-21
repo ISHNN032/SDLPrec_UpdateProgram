@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
+#include "LTexture.h"
 
 //The window renderer
 extern SDL_Renderer* gRenderer;
@@ -47,6 +48,7 @@ struct Layout {
 	}
 };
 
+/*
 struct ProgressBar {
 	SDL_Rect edge, filling;
 	ProgressBar(int x, int y, int w, int h) {
@@ -59,6 +61,27 @@ struct ProgressBar {
 	void setProgress(int per) {
 		filling.w = (int)round(edge.w / 100.0 * per);
 		SDL_RenderFillRect(gRenderer, &filling);
+	}
+};
+*/
+struct ProgressBar {
+	LTexture splite;
+	SDL_Rect edge, filling;
+	ProgressBar(int x, int y, int w, int h) {
+		if (!splite.loadFromFile("./Resources/Images/roll.bmp")) {
+		printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/roll.bmp", SDL_GetError());
+		}
+		edge = { x, y, w, h };
+		filling = { x, y, 0, h };
+	}
+	void render() {
+		splite.render(edge.x, edge.y);
+	}
+	void setProgress(int per) {
+		splite.render(edge.x, edge.y, NULL, per, NULL);
+
+		//filling.w = (int)round(edge.w / 180.0 * per);
+		//SDL_RenderFillRect(gRenderer, &filling);
 	}
 };
 

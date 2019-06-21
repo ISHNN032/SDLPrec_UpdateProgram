@@ -90,6 +90,9 @@ bool MainActivity::init()
 
 void MainActivity::loop()
 {
+	//init render
+	SDL_RenderPresent(gRenderer);
+	
 	//Main loop flag
 	bool quit = false;
 
@@ -162,7 +165,7 @@ bool MainActivity::loadMedia()
 	bool success = true;
 
 	//Open the font
-	gFont = TTF_OpenFont("Fonts/NanumBarunGothic.ttf", 28);
+	gFont = TTF_OpenFont("./Fonts/NanumBarunGothic.ttf", 28);
 	if (gFont == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -174,7 +177,7 @@ bool MainActivity::loadMedia()
 		SDL_Color textColor = { 0xFF, 0xFF, 0xFF };
 
 		unsigned short unicode[128];
-		han2unicode("Update파일을 발견했습니다.", unicode);
+		han2unicode("Update File Detected", unicode);
 
 		if (!gTextTexture.loadFromRenderedText(unicode, textColor))
 		{
@@ -183,7 +186,7 @@ bool MainActivity::loadMedia()
 		}
 	}
 
-	if (!gBackground.loadFromFile("Resources/Images/cubes_structure_black_blue_1024x600.bmp")) {
+	if (!gBackground.loadFromFile("./Resources/Images/cubes_structure_black_blue_1024x600.bmp")) {
 		printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/cubes_structure_black_blue_1024x600.bmp", SDL_GetError());
 		success = false;
 	}
@@ -222,65 +225,64 @@ void MainActivity::drawLayout()
 	}
 
 	progess->render();
-
-	//SDL_RenderPresent(gRenderer);
 }
 
 void MainActivity::checkButtonEvent(SDL_Event* e) {
-	int index = 0;
 	for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
 	{
-		//if (buttons[i] != NULL) {
-			if (e->button.x > buttons[i].x && e->button.x < buttons[i].x + buttons[i].w
-				&& e->button.y > buttons[i].y && e->button.y < buttons[i].y + buttons[i].h) {
-				switch (e->type) {
-				case SDL_MOUSEMOTION:
-					if (currentButtonEvent[index] != 1) {
-						currentButtonEvent[index] = 1;
-						std::cout << "Button [" << index << "] on" << std::endl;
-						SDL_SetRenderDrawColor(gRenderer, 0xFF, 0, 0, 0);
-
-						gBackground.render(0, 0);
-						SDL_RenderDrawRect(gRenderer, &buttons[i]);
-					}
-					break;
-
-				case SDL_MOUSEBUTTONDOWN:
-					if (currentButtonEvent[index] != 2) {
-						currentButtonEvent[index] = 2;
-						std::cout << "Button [" << index << "] down" << std::endl;
-						SDL_SetRenderDrawColor(gRenderer, 0, 0, 0xFF, 0);
-						SDL_RenderDrawRect(gRenderer, &buttons[i]);
-
-						/*
-						for (int i = 1; i <= 100; i++) {
-							progess->setProgress(i);
-							SDL_RenderPresent(gRenderer);
-							sleep(1);
-						}
-						*/
-					}
-					break;
-
-				case SDL_MOUSEBUTTONUP:
-					if (currentButtonEvent[index] != 3) {
-						currentButtonEvent[index] = 3;
-						std::cout << "Button [" << index << "] up" << std::endl;
-						SDL_SetRenderDrawColor(gRenderer, 0, 0xFF, 0, 0);
-						SDL_RenderDrawRect(gRenderer, &buttons[i]);
-					}
-					break;
-				}
-			}
-			else {
-				if (currentButtonEvent[index] != 0) {
-					currentButtonEvent[index] = 0;
-					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		if (e->button.x > buttons[i].x && e->button.x < buttons[i].x + buttons[i].w
+			&& e->button.y > buttons[i].y && e->button.y < buttons[i].y + buttons[i].h) {
+			switch (e->type) {
+			case SDL_MOUSEMOTION:
+				if (currentButtonEvent[i] != 1) {
+					currentButtonEvent[i] = 1;
+					std::cout << "Button [" << i << "] on" << std::endl;
+					drawLayout();
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0, 0, 0);
 					SDL_RenderDrawRect(gRenderer, &buttons[i]);
 				}
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:
+				if (currentButtonEvent[i] != 2) {
+					currentButtonEvent[i] = 2;
+					std::cout << "Button [" << i << "] down" << std::endl;
+					drawLayout();
+					SDL_SetRenderDrawColor(gRenderer, 0, 0, 0xFF, 0);
+					SDL_RenderDrawRect(gRenderer, &buttons[i]);
+					SDL_RenderPresent(gRenderer);
+
+					if(i == 1){
+						for (int i = 1; i <= 180; i++) {
+						drawLayout();
+						progess->setProgress(i);
+						SDL_RenderPresent(gRenderer);
+						sleep(0.1);
+						}
+					}
+				}
+				break;
+
+			case SDL_MOUSEBUTTONUP:
+				if (currentButtonEvent[i] != 3) {
+					currentButtonEvent[i] = 3;
+					std::cout << "Button [" << i << "] up" << std::endl;
+					drawLayout();
+					SDL_SetRenderDrawColor(gRenderer, 0, 0xFF, 0, 0);
+					SDL_RenderDrawRect(gRenderer, &buttons[i]);
+				}
+				break;
 			}
-		//}
-		index++;
+		}
+		else {
+			if (currentButtonEvent[i] != 0) {
+				currentButtonEvent[i] = 0;
+				drawLayout();
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_RenderDrawRect(gRenderer, &buttons[i]);
+			}
+		}
+		SDL_RenderPresent(gRenderer);
 	}
 }
 
