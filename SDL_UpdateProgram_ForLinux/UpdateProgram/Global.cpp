@@ -1,13 +1,11 @@
-#include <SDL.h>
-#include <SDL_ttf.h>
-
+#include "Global.h"
 #include "LTexture.h"
 
 //The window we'll be rendering to
-extern SDL_Window* gWindow = NULL;
+SDL_Window* gWindow = NULL;
 
 //The window renderer
-extern SDL_Renderer* gRenderer = NULL;
+SDL_Renderer* gRenderer = NULL;
 
 //Globally used font
-extern TTF_Font* gFont = NULL;
+TTF_Font* gFont = NULL;

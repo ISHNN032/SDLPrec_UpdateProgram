@@ -1,3 +1,6 @@
+#ifndef _LTexture_
+#define _LTexture_
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
@@ -46,3 +49,5 @@ private:
 	int mWidth;
 	int mHeight;
 };
+
+#endif //_LTexture_

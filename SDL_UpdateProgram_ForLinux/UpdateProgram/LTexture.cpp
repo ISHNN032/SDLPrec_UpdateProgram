@@ -1,10 +1,5 @@
+#include "Global.h"
 #include "LTexture.h"
-
-//The window renderer
-extern SDL_Renderer* gRenderer;
-
-//Globally used font
-extern TTF_Font* gFont;
 
 LTexture::LTexture()
 {

@@ -1,3 +1,6 @@
+#ifndef _MAINACTIVITY_
+#define _MAINACTIVITY_
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
@@ -58,3 +61,5 @@ struct ProgressBar {
 		SDL_RenderFillRect(gRenderer, &filling);
 	}
 };
+
+#endif //_MAINACTIVITY_
