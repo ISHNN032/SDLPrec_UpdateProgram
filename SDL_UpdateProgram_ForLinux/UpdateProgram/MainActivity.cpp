@@ -1,18 +1,11 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
+#include "Global.h"
 #include "MainActivity.h"
 #include "LTexture.h"
 #include "han2unicode.h"
+#include <thread>
 #include <iostream>
-
-//The window we'll be rendering to
-extern SDL_Window* gWindow;
-
-//The window renderer
-extern SDL_Renderer* gRenderer;
-
-//Globally used font
-extern TTF_Font* gFont;
 
 //Top left position
 SDL_Point mPosition;
@@ -20,6 +13,7 @@ SDL_Point mPosition;
 //Rendered texture
 LTexture gTextTexture;
 
+//Background Image
 LTexture gBackground;
 
 
@@ -133,6 +127,7 @@ void MainActivity::loop()
 				}
 			}
 		}
+		//loop here
 	}
 }
 
