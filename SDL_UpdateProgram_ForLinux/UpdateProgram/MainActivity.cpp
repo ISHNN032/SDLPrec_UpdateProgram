@@ -16,14 +16,6 @@ LTexture gTextTexture;
 //Background Image
 LTexture gBackground;
 
-
-int currentButtonEvent[2];
-
-Layout* layout;
-
-ProgressBar* progess;
-int pro = 0;
-
 MainActivity::MainActivity(std::string name, int width, int height)
 {
 	PROGRAM_NAME = name;
@@ -198,10 +190,10 @@ void MainActivity::setLayout()
 {
 	layout = new Layout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	buttons[0] = { SCREEN_WIDTH / 2 - 180, SCREEN_HEIGHT / 2 -15, 120, 30 };
-	buttons[1] = { SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 - 15, 120, 30 };
+	buttons[0] = new Button( SCREEN_WIDTH / 2 - 180, SCREEN_HEIGHT / 2 -15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
+	buttons[1] = new Button( SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 - 15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
 
-	progess = new ProgressBar(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 80, 240, 30);
+	progessbar = new ProgressBar(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 80);
 }
 
 void MainActivity::drawLayout()
@@ -219,27 +211,26 @@ void MainActivity::drawLayout()
 
 	for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
 	{
-		//if (buttons[i] != NULL) {
-			SDL_RenderDrawRect(gRenderer, &buttons[i]);
-		//}
+		buttons[i]->render();
 	}
 
-	progess->render();
+	progessbar->render();
+
+	SDL_RenderPresent(gRenderer);
 }
 
 void MainActivity::checkButtonEvent(SDL_Event* e) {
 	for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
 	{
-		if (e->button.x > buttons[i].x && e->button.x < buttons[i].x + buttons[i].w
-			&& e->button.y > buttons[i].y && e->button.y < buttons[i].y + buttons[i].h) {
+		if (e->button.x > buttons[i]->rect.x && e->button.x < buttons[i]->rect.x + buttons[i]->rect.w
+			&& e->button.y > buttons[i]->rect.y && e->button.y < buttons[i]->rect.y + buttons[i]->rect.h) {
 			switch (e->type) {
 			case SDL_MOUSEMOTION:
 				if (currentButtonEvent[i] != 1) {
 					currentButtonEvent[i] = 1;
 					std::cout << "Button [" << i << "] on" << std::endl;
+					buttons[i]->setColor({0xFF, 0, 0, 0});
 					drawLayout();
-					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0, 0, 0);
-					SDL_RenderDrawRect(gRenderer, &buttons[i]);
 				}
 				break;
 
@@ -247,17 +238,14 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 				if (currentButtonEvent[i] != 2) {
 					currentButtonEvent[i] = 2;
 					std::cout << "Button [" << i << "] down" << std::endl;
+					buttons[i]->setColor({0, 0, 0xFF, 0});
 					drawLayout();
-					SDL_SetRenderDrawColor(gRenderer, 0, 0, 0xFF, 0);
-					SDL_RenderDrawRect(gRenderer, &buttons[i]);
-					SDL_RenderPresent(gRenderer);
 
 					if(i == 1){
 						for (int i = 1; i <= 180; i++) {
-						drawLayout();
-						progess->setProgress(i);
-						SDL_RenderPresent(gRenderer);
-						sleep(0.1);
+							progessbar->setProgress(i);
+							drawLayout();
+							sleep(0.1);
 						}
 					}
 				}
@@ -267,9 +255,8 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 				if (currentButtonEvent[i] != 3) {
 					currentButtonEvent[i] = 3;
 					std::cout << "Button [" << i << "] up" << std::endl;
+					buttons[i]->setColor({0, 0xFF, 0, 0});
 					drawLayout();
-					SDL_SetRenderDrawColor(gRenderer, 0, 0xFF, 0, 0);
-					SDL_RenderDrawRect(gRenderer, &buttons[i]);
 				}
 				break;
 			}
@@ -277,9 +264,8 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 		else {
 			if (currentButtonEvent[i] != 0) {
 				currentButtonEvent[i] = 0;
+				buttons[i]->setColor({0xFF, 0xFF, 0xFF, 0xFF});
 				drawLayout();
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-				SDL_RenderDrawRect(gRenderer, &buttons[i]);
 			}
 		}
 		SDL_RenderPresent(gRenderer);

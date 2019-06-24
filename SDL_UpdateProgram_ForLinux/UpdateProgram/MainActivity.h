@@ -27,7 +27,11 @@ private:
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
 
-	SDL_Rect buttons[2];
+	struct Button* buttons[2];
+	struct Layout* layout;
+	struct ProgressBar* progessbar;
+
+	int currentButtonEvent[2];
 };
 
 struct Layout {
@@ -38,6 +42,8 @@ struct Layout {
 		height = screen_h;
 	}
 	void Draw() {
+		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
 		SDL_RenderDrawRect(gRenderer, new SDL_Rect{ 0, 0, width , height });
 		SDL_RenderDrawRect(gRenderer, new SDL_Rect{ width / 4, height / 4,
 							width / 2, height / 2 });
@@ -66,22 +72,36 @@ struct ProgressBar {
 */
 struct ProgressBar {
 	LTexture splite;
-	SDL_Rect edge, filling;
-	ProgressBar(int x, int y, int w, int h) {
+	int pos_x, pos_y, angle;
+	ProgressBar(int x, int y) {
 		if (!splite.loadFromFile("./Resources/Images/roll.bmp")) {
-		printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/roll.bmp", SDL_GetError());
+			printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/roll.bmp", SDL_GetError());
 		}
-		edge = { x, y, w, h };
-		filling = { x, y, 0, h };
+		pos_x = x;
+		pos_y = y;
+		angle = 0;
 	}
 	void render() {
-		splite.render(edge.x, edge.y);
+		splite.render(pos_x, pos_y, NULL, angle, NULL);
 	}
 	void setProgress(int per) {
-		splite.render(edge.x, edge.y, NULL, per, NULL);
+		angle = per;
+	}
+};
 
-		//filling.w = (int)round(edge.w / 180.0 * per);
-		//SDL_RenderFillRect(gRenderer, &filling);
+struct Button {
+	SDL_Rect rect;
+	SDL_Color drawcolor;
+	Button(int x, int y, int w, int h, SDL_Color color) {
+		drawcolor = color;
+		rect = {x, y, w, h};
+	}
+	void render() {
+		SDL_SetRenderDrawColor(gRenderer, drawcolor.r, drawcolor.g, drawcolor.b, drawcolor.a);
+		SDL_RenderDrawRect(gRenderer, &rect);
+	}
+	void setColor(SDL_Color color) {
+		drawcolor = color;
 	}
 };
 
