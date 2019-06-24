@@ -82,9 +82,6 @@ bool MainActivity::init()
 
 void MainActivity::loop()
 {
-	//init render
-	SDL_RenderPresent(gRenderer);
-	
 	//Main loop flag
 	bool quit = false;
 
@@ -242,10 +239,9 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 					drawLayout();
 
 					if(i == 1){
-						for (int i = 1; i <= 180; i++) {
+						for (int i = 1; i <= 360; i++) {
 							progessbar->setProgress(i);
 							drawLayout();
-							sleep(0.1);
 						}
 					}
 				}
@@ -262,13 +258,16 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 			}
 		}
 		else {
-			if (currentButtonEvent[i] != 0) {
-				currentButtonEvent[i] = 0;
-				buttons[i]->setColor({0xFF, 0xFF, 0xFF, 0xFF});
-				drawLayout();
+			switch (e->type) {
+				case SDL_MOUSEBUTTONDOWN:
+					if (currentButtonEvent[i] != 0) {
+						currentButtonEvent[i] = 0;
+						buttons[i]->setColor({0xFF, 0xFF, 0xFF, 0xFF});
+						drawLayout();
+					}
+					break;
 			}
 		}
-		SDL_RenderPresent(gRenderer);
 	}
 }
 
