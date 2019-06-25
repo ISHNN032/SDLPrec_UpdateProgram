@@ -74,18 +74,18 @@ struct ProgressBar {
 	LTexture splite;
 	int pos_x, pos_y, angle;
 	ProgressBar(int x, int y) {
-		if (!splite.loadFromFile("./Resources/Images/roll.bmp")) {
-			printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/roll.bmp", SDL_GetError());
+		if (!splite.loadFromFile("./Resources/Images/dot/DOT_0.bmp")) {
+			printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/dot/DOT_0.bmp", SDL_GetError());
 		}
 		pos_x = x;
 		pos_y = y;
 		angle = 0;
 	}
 	void render() {
-		splite.render(pos_x, pos_y, NULL, angle, NULL);
+		splite.render(pos_x, pos_y, NULL, 0, NULL);
 	}
 	void setProgress(int per) {
-		angle = per;
+		splite.loadFromFile("./Resources/Images/dot/DOT_" + std::to_string(per%5) + ".bmp");
 	}
 };
 

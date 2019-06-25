@@ -4,8 +4,8 @@
 #include "MainActivity.h"
 #include "LTexture.h"
 #include "han2unicode.h"
-#include <thread>
 #include <iostream>
+#include <unistd.h>
 
 //Top left position
 SDL_Point mPosition;
@@ -190,7 +190,7 @@ void MainActivity::setLayout()
 	buttons[0] = new Button( SCREEN_WIDTH / 2 - 180, SCREEN_HEIGHT / 2 -15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
 	buttons[1] = new Button( SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 - 15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
 
-	progessbar = new ProgressBar(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 80);
+	progessbar = new ProgressBar(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 60);
 }
 
 void MainActivity::drawLayout()
@@ -239,9 +239,10 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 					drawLayout();
 
 					if(i == 1){
-						for (int i = 1; i <= 360; i++) {
+						for (int i = 1; i <= 10; i++) {
 							progessbar->setProgress(i);
 							drawLayout();
+							usleep(250000);
 						}
 					}
 				}
