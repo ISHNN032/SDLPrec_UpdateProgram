@@ -1,8 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "Global.h"
 #include "MainActivity.h"
-#include "LTexture.h"
+#include "Global.h"
 #include "han2unicode.h"
 #include <iostream>
 #include <unistd.h>
@@ -31,7 +30,7 @@ MainActivity::MainActivity(std::string name, int width, int height)
 	}
 	else {
 		setLayout();
-		drawLayout();
+		drawLayout(0);
 		loop();
 	}
 
@@ -112,7 +111,7 @@ void MainActivity::loop()
 					}
 					case SDL_BUTTON_RIGHT: {
 						printf("M_RIGHT | clicks: %d | pos: %d , %d\n", e.button.clicks, e.button.x, e.button.y); break;
-					}
+					} 
 					default:
 						std::cout << "M_DE" << std::endl;		break;
 					}
@@ -187,13 +186,13 @@ void MainActivity::setLayout()
 {
 	layout = new Layout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	buttons[0] = new Button( SCREEN_WIDTH / 2 - 180, SCREEN_HEIGHT / 2 -15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
-	buttons[1] = new Button( SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 - 15, 120, 30, {0xFF,0xFF,0xFF,0xFF} );
+	buttons[0] = new Button( SCREEN_WIDTH / 2 - 180, SCREEN_HEIGHT / 2 + 60, 118, 34, {0xFF,0xFF,0xFF,0xFF}, true );
+	buttons[1] = new Button( SCREEN_WIDTH / 2 + 60, SCREEN_HEIGHT / 2 + 60, 118, 34, {0xFF,0xFF,0xFF,0xFF}, false );
 
 	progessbar = new ProgressBar(SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 60);
 }
 
-void MainActivity::drawLayout()
+void MainActivity::drawLayout(int scene)
 {
 	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
@@ -204,14 +203,21 @@ void MainActivity::drawLayout()
 
 	gTextTexture.render((SCREEN_WIDTH - gTextTexture.getWidth()) / 2,
 		(SCREEN_HEIGHT - gTextTexture.getHeight()) / 2 - 80);
-	//Don't forget too free your surface and texture
 
-	for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
+	switch (scene)
 	{
-		buttons[i]->render();
+	case 0:
+		for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
+		{
+			buttons[i]->render();
+		}
+		break;
+	case 1:
+		progessbar->render();
+		break;
+	default:
+		break;
 	}
-
-	progessbar->render();
 
 	SDL_RenderPresent(gRenderer);
 }
@@ -227,7 +233,7 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 					currentButtonEvent[i] = 1;
 					std::cout << "Button [" << i << "] on" << std::endl;
 					buttons[i]->setColor({0xFF, 0, 0, 0});
-					drawLayout();
+					drawLayout(0);
 				}
 				break;
 
@@ -236,14 +242,19 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 					currentButtonEvent[i] = 2;
 					std::cout << "Button [" << i << "] down" << std::endl;
 					buttons[i]->setColor({0, 0, 0xFF, 0});
-					drawLayout();
+					buttons[i]->onButtonDown();
+					drawLayout(0);
 
-					if(i == 1){
+					if(i == 0){
+						unsigned short unicode[128];
+						han2unicode("Updating", unicode);
+						gTextTexture.loadFromRenderedText(unicode, {0xFF, 0xFF, 0xFF});
 						for (int i = 1; i <= 10; i++) {
 							progessbar->setProgress(i);
-							drawLayout();
+							drawLayout(1);
 							usleep(250000);
 						}
+						SDL_Color textColor = { 0xFF, 0xFF, 0xFF };
 					}
 				}
 				break;
@@ -252,8 +263,13 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 				if (currentButtonEvent[i] != 3) {
 					currentButtonEvent[i] = 3;
 					std::cout << "Button [" << i << "] up" << std::endl;
+					unsigned short unicode[128];
+					han2unicode("Update File Detected", unicode);
+					gTextTexture.loadFromRenderedText(unicode, {0xFF, 0xFF, 0xFF});
+
 					buttons[i]->setColor({0, 0xFF, 0, 0});
-					drawLayout();
+					buttons[i]->onButtonUp();
+					drawLayout(0);
 				}
 				break;
 			}
@@ -263,8 +279,12 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 				case SDL_MOUSEBUTTONDOWN:
 					if (currentButtonEvent[i] != 0) {
 						currentButtonEvent[i] = 0;
+						unsigned short unicode[128];
+						han2unicode("Update File Detected", unicode);
+						gTextTexture.loadFromRenderedText(unicode, {0xFF, 0xFF, 0xFF});
 						buttons[i]->setColor({0xFF, 0xFF, 0xFF, 0xFF});
-						drawLayout();
+						buttons[i]->onButtonUp();
+						drawLayout(0);
 					}
 					break;
 			}

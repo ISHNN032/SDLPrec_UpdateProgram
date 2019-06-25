@@ -20,7 +20,7 @@ public:
 private:
 	bool loadMedia();
 	void setLayout();
-	void drawLayout();
+	void drawLayout(int);
 	void checkButtonEvent(SDL_Event*);
 
 	std::string PROGRAM_NAME;
@@ -90,18 +90,44 @@ struct ProgressBar {
 };
 
 struct Button {
+	LTexture splite;
 	SDL_Rect rect;
 	SDL_Color drawcolor;
-	Button(int x, int y, int w, int h, SDL_Color color) {
+	bool flag;
+
+	Button(int x, int y, int w, int h, SDL_Color color, bool b) {
+		rect = {x + 1, y + 1, w, h};
 		drawcolor = color;
-		rect = {x, y, w, h};
+		flag = b;
+		onButtonUp();
 	}
 	void render() {
+		splite.render(rect.x - 1, rect.y - 1, NULL, 0, NULL);
 		SDL_SetRenderDrawColor(gRenderer, drawcolor.r, drawcolor.g, drawcolor.b, drawcolor.a);
 		SDL_RenderDrawRect(gRenderer, &rect);
 	}
 	void setColor(SDL_Color color) {
 		drawcolor = color;
+	}
+	void onButtonDown(){
+		if(flag){
+			if (!splite.loadFromFile("./Resources/Images/button/nuleunye.bmp"))
+				printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/button/nuleunye.bmp", SDL_GetError());
+		}
+		else{
+			if (!splite.loadFromFile("./Resources/Images/button/nuleunaniyo.bmp"))
+				printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/button/nuleunaniyo.bmp", SDL_GetError());
+		}
+	}
+	void onButtonUp(){
+		if(flag){
+			if (!splite.loadFromFile("./Resources/Images/button/ye.bmp"))
+				printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/button/ye.bmp", SDL_GetError());
+		}
+		else{
+			if (!splite.loadFromFile("./Resources/Images/button/aniyo.bmp"))
+				printf("Unable to load image %s! SDL Error: %s\n", "Resources/Images/button/aniyo.bmp", SDL_GetError());
+		}
 	}
 };
 
