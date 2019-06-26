@@ -7,6 +7,7 @@ SYSROOT = /mnt/user/ISHNN/DEV_KLAK/host/arm-buildroot-linux-gnueabi/sysroot/
 OBJS =  Global.cpp \
         LTexture.cpp \
         Main.cpp \
+        UpdateManager.cpp \
         MainActivity.cpp
        
 

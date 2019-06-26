@@ -1,7 +1,7 @@
 #include "UpdateManager.h"
 #include <iostream>
 #include <unistd.h>
-#include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <dirent.h>
 
@@ -21,9 +21,15 @@ bool UpdateManager::updateFW(){
 
 	struct dirent **items;
 	int nitems, i, j;
+
+	memset(cmd, 0, 100);
+	sprintf(cmd, "mkdir %s", update_path);
+	system(cmd);
+
+	usleep(100000);
 	
     if(exist_dir(update_path)) {
-		printf("Fail to create %s directory!!!\n", update_path);
+		printf("Failed to create %s directory!!!\n", update_path);
 		return false;
 	}
 
@@ -47,7 +53,7 @@ bool UpdateManager::updateFW(){
 				execute_update = 1;
 			}
 			else {
-				//no need to update
+				std::cout<<"UpdateManager : Version is Latest. No need to Update."<<std::endl;
 			}
 		}
 	}
@@ -98,8 +104,7 @@ bool UpdateManager::updateFW(){
 	sprintf(cmd, "rm -rf %s", update_file_img);
 	system(cmd);
 
-	//Update End
-
+	std::cout<<"UpdateManager : Update Complited."<<std::endl;
 
 	sleep(10);
 

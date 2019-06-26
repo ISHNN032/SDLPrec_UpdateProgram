@@ -13,9 +13,6 @@
 #define DIR_EXIST                (0)
 #define DIR_NOT_EXIST            (-1)
 
-#define SCREEN_WIDTH             (720)
-#define SCREEN_HEIGHT            (480)
-
 static char *update_file_img = "/mnt/sd/KLAK_Update.img";
 static char *update_file 	 = "/tmp/KLAK_Update.zip";
 static char *update_path 	 = "/tmp/fw";

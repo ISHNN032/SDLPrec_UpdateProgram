@@ -2,9 +2,11 @@
 
 #include "MainActivity.h"
 #include "Global.h"
+#include "UpdateManager.h"
 #include "han2unicode.h"
 #include <iostream>
 #include <unistd.h>
+#include <pthread.h>
 
 //Top left position
 SDL_Point mPosition;
@@ -222,6 +224,15 @@ void MainActivity::drawLayout(int scene)
 	SDL_RenderPresent(gRenderer);
 }
 
+void *t_function(void *data)
+{
+	UpdateManager manager = UpdateManager();
+	if(! manager.updateFW()){
+		std::cout<<"FW Update Failed."<<std::endl;
+	}
+	update_ongoing = false;
+}
+
 void MainActivity::checkButtonEvent(SDL_Event* e) {
 	for (int i =0; i< sizeof(buttons) / sizeof(buttons[0]); ++i)
 	{
@@ -249,12 +260,25 @@ void MainActivity::checkButtonEvent(SDL_Event* e) {
 						unsigned short unicode[128];
 						han2unicode("Updating", unicode);
 						gTextTexture.loadFromRenderedText(unicode, {0xFF, 0xFF, 0xFF});
-						for (int i = 1; i <= 10; i++) {
-							progessbar->setProgress(i);
+						
+						pthread_t p_thread;
+						int status;
+
+						update_ongoing = true;
+
+						//thread 생성에 실해하였다면 : thread id 값이 0보다 작으면
+						if (pthread_create(&p_thread, NULL, t_function, NULL) < 0)
+						{
+							perror("thread create error : ");
+							exit(0);
+						}
+
+						int j = 0;
+						while(update_ongoing){
+							progessbar->setProgress(j++);
 							drawLayout(1);
 							usleep(250000);
 						}
-						SDL_Color textColor = { 0xFF, 0xFF, 0xFF };
 					}
 				}
 				break;

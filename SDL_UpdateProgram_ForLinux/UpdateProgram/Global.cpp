@@ -9,3 +9,5 @@ SDL_Renderer* gRenderer = NULL;
 
 //Globally used font
 TTF_Font* gFont = NULL;
+
+bool update_ongoing = false;

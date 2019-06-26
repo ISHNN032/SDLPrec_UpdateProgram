@@ -9,6 +9,8 @@
 //The window renderer
 extern SDL_Renderer* gRenderer;
 
+extern bool update_ongoing;
+
 #pragma once
 class MainActivity
 {
@@ -85,7 +87,7 @@ struct ProgressBar {
 		splite.render(pos_x, pos_y, NULL, 0, NULL);
 	}
 	void setProgress(int per) {
-		splite.loadFromFile("./Resources/Images/dot/DOT_" + std::to_string(per%5) + ".bmp");
+		splite.loadFromFile((std::string)"./Resources/Images/dot/DOT_" + std::to_string(per%5) + ".bmp");
 	}
 };
 
