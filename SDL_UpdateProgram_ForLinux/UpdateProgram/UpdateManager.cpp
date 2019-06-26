@@ -46,7 +46,8 @@ bool UpdateManager::updateFW(){
 	if(exist_file(update_file)) {
 		return false;
 	}
-	
+
+	/*
 	if ( check_ver_file("/root", ver_info_cur) ) { 			
 		if ( check_ver_file("/tmp/fw/root", ver_info_update) ) {
 			if( strncmp(ver_info_cur, ver_info_update, strlen(ver_info_update)) != 0 ) {
@@ -62,6 +63,7 @@ bool UpdateManager::updateFW(){
 		
 	if(!execute_update) 
 		return 0;
+	*/
 
 	nitems = scandir(update_path, &items, NULL, alphasort);
 
@@ -100,9 +102,9 @@ bool UpdateManager::updateFW(){
 		}		
 	}
 
-	memset(cmd, 0, 100);
-	sprintf(cmd, "rm -rf %s", update_file_img);
-	system(cmd);
+	//memset(cmd, 0, 100);
+	//sprintf(cmd, "rm -rf %s", update_file_img);
+	//system(cmd);
 
 	std::cout<<"UpdateManager : Update Complited."<<std::endl;
 
